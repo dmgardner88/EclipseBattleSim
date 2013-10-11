@@ -9,4 +9,18 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-EclipseBattleSim::Application.config.secret_key_base = '8b7626de0b4def9833cda35b567a1664cdac31145e512c416f705b7f61158d90da9002d6623aaa82e4665d748ed70195094fd000cd6dd2dc26bfd109574f0df7'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+EclipseBattleSim::Application.config.secret_key_base = secure_token
